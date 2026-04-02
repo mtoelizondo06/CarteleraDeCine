@@ -52,4 +52,6 @@ public class Horario {
     public int getDuracion(){
         return duracion;
     }
+    
+    
 }
