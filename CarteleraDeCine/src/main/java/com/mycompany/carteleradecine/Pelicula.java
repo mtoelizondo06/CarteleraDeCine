@@ -29,6 +29,8 @@ public class Pelicula {
         this.horarios = new ListaHorarios();
     }
     
+    
+    
     public void mostrarHorarios(){
         System.out.println("--Horarios--");
         if(this.horarios.tamanio()==0){
@@ -71,27 +73,68 @@ public class Pelicula {
         return true;
     }
     
+    public boolean eliminarHorario(int id){
+        ListaHorarios nuevo = new ListaHorarios();
+        boolean encontrado = false;
+        for(int i=0; i<horarios.tamanio();i++){
+            Horario h = horarios.get(i);
+            if(h.getId()==id){
+                encontrado = true;
+            }else{
+                nuevo.add(h);
+            }
+        }
+        if(encontrado){
+            horarios = nuevo;
+        }
+        return encontrado;
+    }
+    
     public String getTitulo(){
         return titulo;
+    }
+    
+    public void setTitulo(String titulo){
+        this.titulo = titulo;
     }
     
     public String getDirector(){
         return director;
     }
     
+    public void setDirector(String director){
+        this.director = director;
+    }
+    
     public String getProductor(){
         return productor;
+    }
+    
+    public void setProductor(String productor){
+        this.productor = productor;
     }
     
     public String getClasificacion(){
         return clasificacion;
     }
     
+    public void setClasificacion(String clasificacion){
+        this.clasificacion = clasificacion;
+    }
+    
     public int getDuracionMin(){
         return duracionMin;
     }
     
+    public void setDuracionMin(int duracionMin){
+        this.duracionMin = duracionMin;
+    }
+    
     public String getGenero(){
         return genero;
+    }
+    
+    public void setGenero(String genero){
+        this.genero = genero;
     }
 }

@@ -41,6 +41,10 @@ public class Horario {
         return fechapeli;
     }
     
+    public int getId(){
+        return id;
+    }
+    
     public String getSala(){
         return sala;
     }
