@@ -90,6 +90,10 @@ public class Pelicula {
         return encontrado;
     }
     
+    public ListaHorarios getHorarios(){
+        return horarios;
+    }
+    
     public String getTitulo(){
         return titulo;
     }

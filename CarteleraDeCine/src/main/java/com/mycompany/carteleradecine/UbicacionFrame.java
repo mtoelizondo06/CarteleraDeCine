@@ -264,11 +264,11 @@ public class UbicacionFrame extends javax.swing.JFrame {
  
         SwingUtilities.invokeLater(() -> {
             if (AppContext.rolActual.equals("ADMIN")) {
-                //AdminFrame af = new AdminFrame();
-                //af.setVisible(true);
+                AdminFrame af = new AdminFrame();
+                af.setVisible(true);
             } else {
-                //ClienteFrame cf = new ClienteFrame();
-                //cf.setVisible(true);
+                ClienteFrame cf = new ClienteFrame();
+                cf.setVisible(true);
             }
             this.dispose();
         });

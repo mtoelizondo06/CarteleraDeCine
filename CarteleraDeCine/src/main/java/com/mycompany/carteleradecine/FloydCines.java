@@ -45,4 +45,7 @@ public class FloydCines {
         }
     }
     
+    public int getDistancia(int origen, int destino) {
+        return mtrizDistancias[origen][destino];
+    }
 }
