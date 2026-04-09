@@ -9,7 +9,7 @@ package com.mycompany.carteleradecine;
  * @author mchav
  */
 public class FloydCines {
-    final static int INF = 9999999;
+    public final static int INF = 9999999;
     
     private int [][] mtrizDistancias;
     private int numNodos;
@@ -29,8 +29,10 @@ public class FloydCines {
         for(int k=0; k<numNodos;k++){
             for(int i=0; i<numNodos;i++){
                 for(int j=0; j<numNodos;j++){
-                    if(mtrizDistancias[i][k] + mtrizDistancias[k][j] < mtrizDistancias[i][j]){
-                        mtrizDistancias[i][j] = mtrizDistancias[i][k] + mtrizDistancias[k][j];
+                    if(mtrizDistancias[i][k] != INF && mtrizDistancias[k][j] != INF){ 
+                        if(mtrizDistancias[i][k] + mtrizDistancias[k][j] < mtrizDistancias[i][j]){
+                            mtrizDistancias[i][j] = mtrizDistancias[i][k] + mtrizDistancias[k][j];
+                        } 
                     }
                 }
             }

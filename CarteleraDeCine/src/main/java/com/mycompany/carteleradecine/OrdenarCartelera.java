@@ -15,7 +15,7 @@ public class OrdenarCartelera {
         if(inicio<fin){
             int pivote = partir(arr,inicio,fin,ascend);
             ordenar(arr,inicio,pivote-1,ascend);
-            ordenar(arr,inicio,pivote+1,ascend);
+            ordenar(arr, pivote + 1, fin, ascend);
         }
     }
     

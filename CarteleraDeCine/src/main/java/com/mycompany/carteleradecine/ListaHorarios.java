@@ -26,6 +26,7 @@ public class ListaHorarios {
             while(actual.siguiente != null){
                 actual = actual.siguiente;
             }
+            actual.siguiente = nuevo;
         }
         tamanio++;
     }

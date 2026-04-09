@@ -15,7 +15,7 @@ public class Rutas {
     public static final String[] CHIHUAHUA = {"Ignacio Zaragoza", "Allende", "Valle de Zaragoza", "Rosario", "Nonoava","Matamoros","Guadalupe y Calvo","Coronado","Delicias","Galeana"};
     public static final String[] SINALOA = {"Guasave", "Navolato", "Cosalá", "Angostura", "Mocorito"};
     
-    private static final int INF = 99999999;
+    public static final int INF = 9999999;
     
     public static final int[][] distJalisco = {
         {  0,  12,  15,  20,  35,  25, INF,  55, INF, 300}, // Guadalajara

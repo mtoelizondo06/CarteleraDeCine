@@ -259,6 +259,9 @@ public class UbicacionFrame extends javax.swing.JFrame {
         AppContext.nombreEstado    = ESTADOS.get(idE);
         AppContext.nombreMunicipio = MUNICIPIOS.get(idE).get(idM);
  
+        AppContext.listaPeliculas = new ListaPeliculas();
+        AppContext.pilaDeshacer = new PilaDeshacer();
+        
         // Cargar datos de prueba en el contexto compartido
         CarteleraDeCine.datosPrueba();
  
