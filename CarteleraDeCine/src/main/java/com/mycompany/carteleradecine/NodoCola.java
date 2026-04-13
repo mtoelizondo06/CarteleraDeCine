@@ -9,11 +9,11 @@ import com.mycompany.carteleradecine.Pelicula;
  * @author mchav
  */
 public class NodoCola {
-    public Pelicula datos;
+    public String nombre;
     public NodoCola siguiente;
     
-    public NodoCola(Pelicula datos){
-        this.datos = datos;
+    public NodoCola(String nombre){
+        this.nombre = nombre;
         this.siguiente = null;
     }
 }
@@ -27,8 +27,8 @@ class ColaImpresion{
         this.atras = null;
     }
     
-    public void enqueue(Pelicula p){
-        NodoCola nuevo = new NodoCola(p);
+    public void enqueue(String nombre){
+        NodoCola nuevo = new NodoCola(nombre);
         if(atras == null){
             frente = nuevo;
             atras = nuevo;
@@ -38,20 +38,32 @@ class ColaImpresion{
         atras = nuevo;
     }
     
-    public Pelicula dequeue(){
+    public String dequeue(){
         if(estaVacia()){
             return null;
         }
-        Pelicula p = frente.datos;
+        String nombre = frente.nombre;
         frente = frente.siguiente;
         
         if(frente == null){
             atras = null;
         }
-        return p;
+        return nombre;
     }
     
     public boolean estaVacia() {
         return frente == null;
+    }
+    
+    public String verFila() {
+        if (estaVacia()) return "La fila está vacía.";
+        StringBuilder sb = new StringBuilder("══ FILA DE ESPERA ══\n");
+        NodoCola actual = frente;
+        int i = 1;
+        while (actual != null) {
+            sb.append(i++).append(". ").append(actual.nombre).append("\n");
+            actual = actual.siguiente;
+        }
+        return sb.toString();
     }
 }

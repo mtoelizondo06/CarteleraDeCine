@@ -356,21 +356,21 @@ public class CarteleraDeCine {
         String nombre;
         System.out.println("Nombre a buscar: ");
         nombre = sc.nextLine().trim();
-        Buscador.buscarPorNombre(getPrimerNodo(), nombre);
+        //Buscador.buscarPorNombre(getPrimerNodo(), nombre);
     }
     
     public static void buscarPorClasificacion(){
         String clasi;
         System.out.println("Clasificacion por buscar (AA/A/B/B15/C/D): ");
         clasi = sc.nextLine().trim();
-        Buscador.buscarPorClasificacion(getPrimerNodo(), clasi, false);
+        //Buscador.buscarPorClasificacion(getPrimerNodo(), clasi, false);
     }
     
     public static void buscarPorGenero(){
         String gen;
         System.out.println("Genero a buscar: ");
         gen = sc.nextLine().trim();
-        Buscador.buscarPorGenero(getPrimerNodo(), gen, false);
+        //Buscador.buscarPorGenero(getPrimerNodo(), gen, false);
     }
     
     public static void ordenarCartelera(){

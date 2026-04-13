@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+
 public class ClienteFrame extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ClienteFrame.class.getName());
@@ -11,7 +12,8 @@ public class ClienteFrame extends javax.swing.JFrame {
     private static final Color AZUL_MEDIO  = new Color(26, 54, 124);
     private static final Color DORADO      = new Color(212, 175, 55);
     private static final Color BLANCO      = Color.WHITE;
-     private JTextArea areaResultados;
+    private JTextArea areaResultados;
+    
     
     public ClienteFrame() {
         initUI();
@@ -88,13 +90,13 @@ public class ClienteFrame extends javax.swing.JFrame {
             "1. Buscar por nombre","2. Buscar por clasificación",
             "3. Buscar por género","4. Ordenar Cartelera (A/D)",
             "5. Consultar Película","6. Consultar Cartelera",
-            "7. Cines Cercanos (Rutas)"
+            "7. Cines Cercanos (Rutas)", "8. Fila de Boletos"
         };
         ActionListener[] acciones = {
             e -> buscarNombre(), e -> buscarClasificacion(),
             e -> buscarGenero(), e -> ordenarCartelera(),
             e -> consultarPelicula(), e -> consultarCartelera(),
-            e -> cineCercano()
+            e -> cineCercano(), e-> simularFilaBoletos()
         };
  
         for (int i = 0; i < opciones.length; i++) {
@@ -157,66 +159,83 @@ public class ClienteFrame extends javax.swing.JFrame {
         return null;
     }
     
-    private void buscarNombre() {
-        String nombre = JOptionPane.showInputDialog(this, "Nombre de la película:");
-        if (nombre == null) return;
-        StringBuilder sb = new StringBuilder();
-        boolean encontrada = false;
-        
+    private NodoPelicula getPrimerNodo() {
+        NodoPelicula cabeza = null;
+        NodoPelicula ultimo = null;
         for (int i = 0; i < AppContext.listaPeliculas.tamanio(); i++) {
-            Pelicula p = AppContext.listaPeliculas.get(i);
-            if (p.getTitulo().equalsIgnoreCase(nombre.trim())) {
-                sb.append("══ ").append(p.getTitulo()).append(" ══\n")
-                  .append("Director:      ").append(p.getDirector()).append("\n")
-                  .append("Clasificación: ").append(p.getClasificacion()).append("\n")
-                  .append("Género:        ").append(p.getGenero()).append("\n");
-                
-                // ¡AQUÍ AGREGAMOS LOS HORARIOS!
-                anexarHorarios(p, sb);
-                encontrada = true;
+            NodoPelicula nuevo = new NodoPelicula(AppContext.listaPeliculas.get(i));
+            if (cabeza == null) { 
+                cabeza = nuevo; 
+                ultimo = nuevo; 
+            } else { 
+                ultimo.siguiente = nuevo; 
+                ultimo = nuevo; 
             }
         }
-        mostrar(encontrada ? sb.toString() : "No se encontró: " + nombre);
+        return cabeza;
+    }
+    
+    private void buscarNombre() {
+        String nombre = JOptionPane.showInputDialog(this, "Nombre de la película:");
+        if (nombre == null || nombre.trim().isEmpty()) return;
+        
+        StringBuilder sb = new StringBuilder();
+        boolean[] encontrada = {false}; 
+        
+       
+        Buscador.buscarPorNombre(getPrimerNodo(), nombre.trim(), sb, encontrada);
+        mostrar(sb.toString());
     }
  
+    private ColaImpresion filaBoletos = new ColaImpresion();
+
+    private void simularFilaBoletos() {
+        String[] menuCola = {"1. Formarse", "2. Atender", "3. Ver Fila"};
+        String op = (String) JOptionPane.showInputDialog(this, "Taquilla", "Fila de Boletos",
+            JOptionPane.PLAIN_MESSAGE, null, menuCola, menuCola[0]);
+            
+        if (op == null) return;
+
+        if (op.startsWith("1")) {
+            String nombre = JOptionPane.showInputDialog(this, "Nombre del cliente:");
+            if (nombre != null && !nombre.trim().isEmpty()) {
+                filaBoletos.enqueue(nombre.trim()); 
+                mostrar(nombre.trim() + " se ha formado en la fila.");
+            }
+        } else if (op.startsWith("2")) {
+            if (filaBoletos.estaVacia()) {
+                mostrar("La fila está vacía. No hay clientes por atender.");
+            } else {
+                String atendido = filaBoletos.dequeue(); 
+                mostrar(" Atendiendo en taquilla a: " + atendido);
+            }
+        } else {
+            mostrar(filaBoletos.verFila()); 
+        }
+    }
+    
     private void buscarClasificacion() {
         String[] opts = {"AA","A","B","B15","C","D"};
         String clasif = (String) JOptionPane.showInputDialog(this, "Clasificación:", "Buscar",
             JOptionPane.PLAIN_MESSAGE, null, opts, opts[0]);
         if (clasif == null) return;
         
-        StringBuilder sb = new StringBuilder("Películas con clasificación " + clasif + ":\n\n");
-        boolean alguna = false;
+        StringBuilder sb = new StringBuilder("Resultados de clasificación " + clasif + ":\n\n");
         
-        for (int i = 0; i < AppContext.listaPeliculas.tamanio(); i++) {
-            Pelicula p = AppContext.listaPeliculas.get(i);
-            if (p.getClasificacion().equalsIgnoreCase(clasif)) {
-                sb.append("• ").append(p.getTitulo()).append(" — ").append(p.getGenero()).append("\n");
-                
-                // ¡AQUÍ AGREGAMOS LOS HORARIOS!
-                anexarHorarios(p, sb);
-                alguna = true;
-            }
-        }
-        mostrar(alguna ? sb.toString() : "No hay películas con clasificación: " + clasif);
+        // ¡Usamos TU clase Buscador!
+        Buscador.buscarPorClasificacion(getPrimerNodo(), clasif, false, sb);
+        mostrar(sb.toString());
     }
  
     private void buscarGenero() {
         String genero = JOptionPane.showInputDialog(this, "Género a buscar:");
-        if (genero == null) return;
+        if (genero == null || genero.trim().isEmpty()) return;
         
-        StringBuilder sb = new StringBuilder("Películas de género: " + genero + "\n\n");
-        boolean alguna = false;
+        StringBuilder sb = new StringBuilder("Resultados de género " + genero + ":\n\n");
         
-        for (int i = 0; i < AppContext.listaPeliculas.tamanio(); i++) {
-            Pelicula p = AppContext.listaPeliculas.get(i);
-            if (p.getGenero().equalsIgnoreCase(genero.trim())) {
-                sb.append("• ").append(p.getTitulo()).append(" [").append(p.getClasificacion()).append("]\n");
-                anexarHorarios(p, sb);
-                alguna = true;
-            }
-        }
-        mostrar(alguna ? sb.toString() : "No se encontraron películas del género: " + genero);
+        // ¡Usamos TU clase Buscador!
+        Buscador.buscarPorGenero(getPrimerNodo(), genero.trim(), false, sb);
+        mostrar(sb.toString());
     }
  
     private void ordenarCartelera() {

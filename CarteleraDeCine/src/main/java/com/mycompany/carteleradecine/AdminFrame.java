@@ -96,12 +96,12 @@ public class AdminFrame extends javax.swing.JFrame {
         String[] opciones = {
             "1. Alta de Película","2. Alta de Horario","3. Baja de Película",
             "4. Baja de Horario","5. Modificar Película","6. Consultar Película",
-            "7. Consultar Cartelera"
+            "7. Consultar Cartelera" , "8. Deshacer Alta"
         };
         ActionListener[] acciones = {
             e -> altaPelicula(), e -> altaHorario(), e -> bajaPelicula(),
             e -> bajaHorario(), e -> modificarPelicula(), e -> consultarPelicula(),
-            e -> consultarCartelera()
+            e -> consultarCartelera(), e -> deshacerAlta()
         };
  
         for (int i = 0; i < opciones.length; i++) {
@@ -197,6 +197,32 @@ public class AdminFrame extends javax.swing.JFrame {
             mostrar("Película agregada: " + p.getTitulo());
         } catch (Exception ex) {
             mostrar("Error: duración inválida.");
+        }
+    }
+    
+    private void deshacerAlta() {
+        try {
+            // Extraemos el último elemento de la pila
+            Pelicula pDeshacer = AppContext.pilaDeshacer.pop();
+            
+            if (pDeshacer == null) {
+                mostrar("La pila está vacía. No hay nada que deshacer.");
+                return;
+            }
+
+            // Reconstruimos la lista omitiendo la película que acabamos de deshacer
+            ListaPeliculas nuevaLista = new ListaPeliculas();
+            for (int i = 0; i < AppContext.listaPeliculas.tamanio(); i++) {
+                Pelicula actual = AppContext.listaPeliculas.get(i);
+                if (!actual.getTitulo().equalsIgnoreCase(pDeshacer.getTitulo())) {
+                    nuevaLista.add(actual);
+                }
+            }
+            AppContext.listaPeliculas = nuevaLista;
+            mostrar("Se deshizo el alta de la película:\n" + pDeshacer.getTitulo());
+            
+        } catch (Exception e) {
+            mostrar("La pila está vacía o ocurrió un error al deshacer.");
         }
     }
  
