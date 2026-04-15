@@ -26,9 +26,9 @@ public class FloydCines {
     }
     
     public void calcularRuta(){
-        for(int k=0; k<numNodos;k++){
-            for(int i=0; i<numNodos;i++){
-                for(int j=0; j<numNodos;j++){
+        for(int k=0; k<numNodos;k++){  //K es el municipio como escala
+            for(int i=0; i<numNodos;i++){ //I es el punto de donde sales
+                for(int j=0; j<numNodos;j++){ //J es el destino
                     if(mtrizDistancias[i][k] != INF && mtrizDistancias[k][j] != INF){ 
                         if(mtrizDistancias[i][k] + mtrizDistancias[k][j] < mtrizDistancias[i][j]){
                             mtrizDistancias[i][j] = mtrizDistancias[i][k] + mtrizDistancias[k][j];

@@ -276,6 +276,19 @@ public class AdminFrame extends javax.swing.JFrame {
             return;
         }
         try {
+            int numeroSala = Integer.parseInt(tSala.getText().trim());
+            if (numeroSala < 1 || numeroSala > 10) {
+                mostrar("Error: Sala no existente. El cine solo tiene salas del 1 al 10.");
+                return;
+            }
+
+            // ── REGLA 2: Validar Horario (22:00 a 07:00) ──
+            LocalTime horaPelicula = LocalTime.parse(tHora.getText().trim());
+            // Si la hora es igual o mayor a las 22:00, o es antes de las 07:00, lanzamos error
+            if (!horaPelicula.isBefore(LocalTime.of(22, 0)) || horaPelicula.isBefore(LocalTime.of(7, 0))) {
+                mostrar("Error: El cine no está disponible a esa hora (Horario de servicio: 07:00 a 21:59).");
+                return;
+            }
             int idAutomatico = (int)(Math.random() * 9000) + 1000;
             //Creamos el horario tomando la duración directa de la película
             Horario h = new Horario(
@@ -338,20 +351,39 @@ public class AdminFrame extends javax.swing.JFrame {
         JTextField tProd   = new JTextField(p.getProductor());
         JTextField tClasif = new JTextField(p.getClasificacion());
         JTextField tGenero = new JTextField(p.getGenero());
+        JTextField tDuracion = new JTextField(String.valueOf(p.getDuracionMin()));
+        // Listas desplegables como en Alta
+        String[] arrClasif = {"AA", "A", "B", "B15", "C", "D"};
+        JComboBox<String> cmbClasif = new JComboBox<>(arrClasif);
+        cmbClasif.setSelectedItem(p.getClasificacion()); // Seleccionamos la que ya tenía
+
+        String[] arrGeneros = {"Acción", "Comedia", "Drama", "Ciencia Ficción", "Terror", "Romance", "Fantasía", "Animación", "Documental"};
+        JComboBox<String> cmbGenero = new JComboBox<>(arrGeneros);
+        cmbGenero.setSelectedItem(p.getGenero()); // Seleccionamos el que ya tenía
+        
         panel.add(new JLabel("Título:")); panel.add(tTitulo);
         panel.add(new JLabel("Director:")); panel.add(tDir);
         panel.add(new JLabel("Productor:")); panel.add(tProd);
-        panel.add(new JLabel("Clasificación:")); panel.add(tClasif);
-        panel.add(new JLabel("Género:")); panel.add(tGenero);
+        panel.add(new JLabel("Clasificación:")); panel.add(cmbClasif);
+        panel.add(new JLabel("Duración (min):")); panel.add(tDuracion);
+        panel.add(new JLabel("Género:")); panel.add(cmbGenero);
 
         int r = JOptionPane.showConfirmDialog(this, panel, "Modificar — " + p.getTitulo(), JOptionPane.OK_CANCEL_OPTION);
         if (r != JOptionPane.OK_OPTION) return;
-        p.setTitulo(tTitulo.getText().trim());
-        p.setDirector(tDir.getText().trim());
-        p.setProductor(tProd.getText().trim());
-        p.setClasificacion(tClasif.getText().trim());
-        p.setGenero(tGenero.getText().trim());
-        mostrar("Película modificada: " + p.getTitulo());
+        try {
+            int dur = Integer.parseInt(tDuracion.getText().trim());
+            
+            p.setTitulo(tTitulo.getText().trim());
+            p.setDirector(tDir.getText().trim());
+            p.setProductor(tProd.getText().trim());
+            p.setClasificacion((String) cmbClasif.getSelectedItem());
+            p.setGenero((String) cmbGenero.getSelectedItem());
+            p.setDuracionMin(dur); // Modificamos la duración
+            
+            mostrar("✅ Película modificada con éxito:\n" + p.getTitulo());
+        } catch (Exception ex) {
+            mostrar("❌ Error: La duración debe ser un número entero.");
+        }
     }
  
     private void consultarPelicula() {
@@ -396,7 +428,8 @@ public class AdminFrame extends javax.swing.JFrame {
         } else {
             for (int i = 0; i < p.getHorarios().tamanio(); i++) {
                 Horario h = p.getHorarios().get(i);
-                sb.append("Sala: ").append(h.getSala())
+                sb.append("Folio: ").append(h.getId())
+                  .append(" | Sala: ").append(h.getSala())
                   .append(" | Fecha: ").append(h.getFecha())
                   .append(" | Hora: ").append(h.getHoraInicio()).append("\n");
             }
