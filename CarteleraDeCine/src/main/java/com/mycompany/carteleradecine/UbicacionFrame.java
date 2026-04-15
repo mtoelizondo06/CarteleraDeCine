@@ -259,11 +259,23 @@ public class UbicacionFrame extends javax.swing.JFrame {
         AppContext.nombreEstado    = ESTADOS.get(idE);
         AppContext.nombreMunicipio = MUNICIPIOS.get(idE).get(idM);
  
-        AppContext.listaPeliculas = new ListaPeliculas();
-        AppContext.pilaDeshacer = new PilaDeshacer();
+        // Creamos una llave única para este cine exacto, por ejemplo "J11-A" (Jalisco-Guadalajara)
+        String claveCine = idE + "-" + idM;
         
-        // Cargar datos de prueba en el contexto compartido
-        CarteleraDeCine.datosPrueba();
+        if (!AppContext.baseDatosPeliculas.containsKey(claveCine)) {
+            // Si la ciudad NO existe, creamos sus listas y le ponemos los datos de prueba
+            AppContext.baseDatosPeliculas.put(claveCine, new ListaPeliculas());
+            AppContext.baseDatosPilas.put(claveCine, new PilaDeshacer());
+            
+            AppContext.listaPeliculas = AppContext.baseDatosPeliculas.get(claveCine);
+            AppContext.pilaDeshacer = AppContext.baseDatosPilas.get(claveCine);
+            
+            CarteleraDeCine.datosPrueba();
+        }else{
+            // Si la ciudad existe, solo sacamos sus datos intactos
+            AppContext.listaPeliculas = AppContext.baseDatosPeliculas.get(claveCine);
+            AppContext.pilaDeshacer = AppContext.baseDatosPilas.get(claveCine);
+        }
  
         SwingUtilities.invokeLater(() -> {
             if (AppContext.rolActual.equals("ADMIN")) {

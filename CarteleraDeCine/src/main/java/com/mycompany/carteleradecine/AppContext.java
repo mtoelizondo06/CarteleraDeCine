@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.mycompany.carteleradecine;
-
+import java.util.HashMap;
 /**
  *
  * @author mchav
@@ -23,6 +23,10 @@ public class AppContext {
     public static String idMunicipio  = "";   // A..J (según tabla)
     public static String nombreEstado = "";
     public static String nombreMunicipio = "";
+    
+    // Aquí se guardarán todas las carteleras, separadas por una llave (Ej. "J11-A")
+    public static HashMap<String, ListaPeliculas> baseDatosPeliculas = new HashMap<>();
+    public static HashMap<String, PilaDeshacer> baseDatosPilas = new HashMap<>();
     
     public static ListaPeliculas listaPeliculas = new ListaPeliculas();
     public static PilaDeshacer   pilaDeshacer   = new PilaDeshacer();

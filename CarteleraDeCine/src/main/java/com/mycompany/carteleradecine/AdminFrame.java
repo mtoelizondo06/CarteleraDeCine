@@ -123,6 +123,17 @@ public class AdminFrame extends javax.swing.JFrame {
         s.insets = new Insets(20, 10, 10, 10);
         sidebar.add(btnSalir, s);
  
+        // ── BOTÓN REGRESAR (NUEVO) ───────────────────────────────────────────
+        JButton btnRegresar = crearBotonMenu("Regresar");
+        btnRegresar.setForeground(new Color(255,160,160));
+        btnRegresar.addActionListener(e -> {
+            new UbicacionFrame().setVisible(true);
+            dispose();
+        });
+        s.gridy = 3 + opciones.length + 2; // Una posición más abajo
+        s.insets = new Insets(2, 10, 10, 10);
+        sidebar.add(btnRegresar, s);
+        
         // Relleno
         JPanel relleno = new JPanel(); relleno.setOpaque(false);
         s.gridy = 99; s.weighty = 1.0;
@@ -176,22 +187,40 @@ public class AdminFrame extends javax.swing.JFrame {
     
     private void altaPelicula() {
         JPanel panel = new JPanel(new GridLayout(0, 2, 8, 8));
-        JTextField tTitulo    = new JTextField(); JTextField tDirector  = new JTextField();
-        JTextField tProductor = new JTextField(); JTextField tClasif    = new JTextField();
-        JTextField tDuracion  = new JTextField(); JTextField tGenero    = new JTextField();
+        JTextField tTitulo    = new JTextField();
+        JTextField tDirector  = new JTextField();
+        JTextField tProductor = new JTextField();
+        JTextField tDuracion  = new JTextField();
+        
+        String[] arrClasif = {"AA", "A", "B", "B15", "C", "D"};
+        JComboBox<String> cmbClasif = new JComboBox<>(arrClasif);
+        
+        String[] arrGeneros = {"Acción", "Comedia", "Drama", "Ciencia Ficción", "Terror", "Romance", "Fantasía", "Animación", "Documental"};
+        JComboBox<String> cmbGenero = new JComboBox<>(arrGeneros);
+        
         panel.add(new JLabel("Título:")); panel.add(tTitulo);
         panel.add(new JLabel("Director:")); panel.add(tDirector);
         panel.add(new JLabel("Productor:")); panel.add(tProductor);
-        panel.add(new JLabel("Clasificación (AA/A/B/B15/C/D):")); panel.add(tClasif);
+        panel.add(new JLabel("Clasificación:")); panel.add(cmbClasif);
         panel.add(new JLabel("Duración (min):")); panel.add(tDuracion);
-        panel.add(new JLabel("Género:")); panel.add(tGenero);
+        panel.add(new JLabel("Género:")); panel.add(cmbGenero);
  
         int r = JOptionPane.showConfirmDialog(this, panel, "Alta de Película", JOptionPane.OK_CANCEL_OPTION);
-        if (r != JOptionPane.OK_OPTION) return;
+        
+        if (r != JOptionPane.OK_OPTION){
+            return;
+        }
+        
         try {
             int dur = Integer.parseInt(tDuracion.getText().trim());
+            
+            // Extraemos lo que el usuario seleccionó en las listas
+            String clasifSel = (String) cmbClasif.getSelectedItem();
+            String generoSel = (String) cmbGenero.getSelectedItem();
+
             Pelicula p = new Pelicula(tTitulo.getText().trim(), tDirector.getText().trim(),
-                tProductor.getText().trim(), tClasif.getText().trim(), dur, tGenero.getText().trim());
+                tProductor.getText().trim(), clasifSel, dur, generoSel);
+                
             AppContext.listaPeliculas.add(p);
             AppContext.pilaDeshacer.push(p);
             mostrar("Película agregada: " + p.getTitulo());
@@ -230,28 +259,34 @@ public class AdminFrame extends javax.swing.JFrame {
         String titulo = JOptionPane.showInputDialog(this, "Título de la película:");
         if (titulo == null) return;
         
-        // ¡CAMBIO AQUÍ! Usamos el buscador global
+        //buscador global del archivo java
         Pelicula p = buscarPeliculaGlobal(titulo);
         if (p == null) { mostrar("Película no encontrada."); return; }
 
         JPanel panel = new JPanel(new GridLayout(0, 2, 8, 8));
-        JTextField tId    = new JTextField(); JTextField tFecha = new JTextField("2026-04-10");
-        JTextField tHora  = new JTextField("18:00"); JTextField tSala = new JTextField();
-        JTextField tDur   = new JTextField();
-        panel.add(new JLabel("ID Horario:")); panel.add(tId);
+        JTextField tFecha = new JTextField("2026-04-10");
+        JTextField tHora  = new JTextField("18:00"); 
+        JTextField tSala  = new JTextField();
         panel.add(new JLabel("Fecha (YYYY-MM-DD):")); panel.add(tFecha);
         panel.add(new JLabel("Hora (HH:MM):")); panel.add(tHora);
         panel.add(new JLabel("Sala:")); panel.add(tSala);
-        panel.add(new JLabel("Duración (min):")); panel.add(tDur);
 
         int r = JOptionPane.showConfirmDialog(this, panel, "Alta de Horario — " + p.getTitulo(), JOptionPane.OK_CANCEL_OPTION);
-        if (r != JOptionPane.OK_OPTION) return;
+        if (r != JOptionPane.OK_OPTION){
+            return;
+        }
         try {
-            Horario h = new Horario(Integer.parseInt(tId.getText().trim()),
-                LocalDate.parse(tFecha.getText().trim()), LocalTime.parse(tHora.getText().trim()),
-                tSala.getText().trim(), Integer.parseInt(tDur.getText().trim()));
+            int idAutomatico = (int)(Math.random() * 9000) + 1000;
+            //Creamos el horario tomando la duración directa de la película
+            Horario h = new Horario(
+                idAutomatico, // ID autogenerado
+                LocalDate.parse(tFecha.getText().trim()), 
+                LocalTime.parse(tHora.getText().trim()),
+                tSala.getText().trim(), 
+                p.getDuracionMin() //Duración tomada en automático de la película
+            );
             boolean ok = p.agregarHorario(h);
-            mostrar(ok ? "Horario agregado a: " + p.getTitulo() : "❌ Empalme de horario detectado.");
+            mostrar(ok ? " Horario agregado a: " + p.getTitulo() + "\nFolio asignado: " + idAutomatico : "Empalme de horario detectado.");
         } catch (Exception ex) {
             mostrar("Formato inválido. Use YYYY-MM-DD y HH:MM");
         }

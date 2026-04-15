@@ -180,14 +180,14 @@ public class LoginFrame extends javax.swing.JFrame {
         t.gridy = 5; t.insets = new Insets(0,0,0,0);
         tarjeta.add(btnLogin, t);
  
-        // ── Hint de credenciales (para pruebas) ────────────────────────────────
+        // ── Hint de credenciales (para pruebas)
         JLabel lblHint = new JLabel("<html><center><font color='#8899aa' size='2'>"
             + "Admin: " + AppContext.ADMIN_EMAIL + " / " + AppContext.ADMIN_PASS + "<br>"
             + "Cliente: " + AppContext.CLIENT_EMAIL + " / " + AppContext.CLIENT_PASS
             + "</font></center></html>");
         lblHint.setHorizontalAlignment(SwingConstants.CENTER);
  
-        // ── Wrap tarjeta ────────────────────────────────────────────────────────
+        // ── Wrap tarjeta
         JPanel wrapTarjeta = new JPanel(new GridBagLayout());
         wrapTarjeta.setOpaque(false);
         wrapTarjeta.setBorder(BorderFactory.createEmptyBorder(0, 40, 0, 40));
@@ -226,7 +226,7 @@ public class LoginFrame extends javax.swing.JFrame {
             abrirUbicacion();
  
         } else if (correo.equals(AppContext.CLIENT_EMAIL.toLowerCase()) &&
-                   pass.equals(AppContext.CLIENT_PASS)) {
+            pass.equals(AppContext.CLIENT_PASS)) {
             AppContext.rolActual   = "CLIENTE";
             AppContext.emailActual = correo;
             abrirUbicacion();

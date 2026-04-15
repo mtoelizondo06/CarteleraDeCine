@@ -116,6 +116,18 @@ public class ClienteFrame extends javax.swing.JFrame {
         s.gridy = 99; s.weighty = 1.0;
         sidebar.add(relleno, s);
  
+        // ── BOTÓN REGRESAR (NUEVO) ───────────────────────────────────────────
+        JButton btnRegresar = crearBotonMenu("Regresar");
+        btnRegresar.setForeground(new Color(255,160,160));
+        btnRegresar.addActionListener(e -> {
+            new UbicacionFrame().setVisible(true);
+            dispose();
+        });
+        s.gridy = 3 + opciones.length + 2;// Una posición más abajo
+        s.insets = new Insets(2, 10, 10, 10);
+        sidebar.add(btnRegresar, s);
+        
+        
         // --Panel resultados
         JPanel panelResultados = new JPanel(new BorderLayout());
         panelResultados.setBackground(new Color(248,250,255));
